@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS // Limiar Paranormal RPG Platform</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#05070f',
+                            panel: '#0a0e1a',
+                            card: '#0e1329',
+                            border: '#2e1a47',
+                            violet: '#a855f7',
+                            neon: '#00f3ff',
+                            pink: '#f43f5e',
+                            glow: '#7c3aed',
+                            gold: '#fbbf24',
+                            emerald: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ================================================================= -->
+    <!-- [1. SEÇÃO DE ESTILOS - CSS]                                       -->
+    <!-- (Se desejar separar em arquivo externo, copie todo o conteúdo    -->
+    <!--  abaixo para um arquivo 'style.css')                              -->
+    <!-- ================================================================= -->
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #05070f;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .neon-glow-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+        }
+
+        .neon-glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+        }
+
+        .neon-glow-emerald {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .cyber-glass {
+            background: rgba(14, 19, 41, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .cyber-glass-hover:hover {
+            border-color: rgba(0, 243, 255, 0.6);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.25);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070913;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b0764;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+
+        .scanline-bg {
+            background: linear-gradient(
+                rgba(18, 16, 38, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+        }
+
+        @keyframes rollPulse {
+            0% { transform: scale(0.9) rotate(-10deg); opacity: 0.5; }
+            50% { transform: scale(1.15) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .animate-roll {
+            animation: rollPulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden bg-[#05070f] text-slate-200 scanline-bg">
+
+    <!-- ================================================================= -->
+    <!-- [2. SEÇÃO DE ESTRUTURA - HTML]                                    -->
+    <!-- ================================================================= -->
+
+    <aside class="w-full md:w-64 bg-[#0a0e1a]/95 backdrop-blur-lg border-r border-purple-900/40 flex flex-col justify-between z-30 shrink-0">
+        <div>
+            <!-- Brand Logo -->
+            <div class="p-4 border-b border-purple-900/40 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center neon-glow-purple">
+                        <i class="fa-solid fa-ghost text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg tracking-wider text-cyan-400 font-orbitron">NEXUS</h1>
+                        <p class="text-[10px] text-purple-400 tracking-widest font-mono">LIMIAR RPG // VTT</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="p-3 space-y-1.5">
+                <button onclick="switchView('landing')" id="nav-landing" class="nav-btn active flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all bg-purple-900/40 text-cyan-300 border border-cyan-500/30">
+                    <i class="fa-solid fa-house w-5 text-center text-cyan-400"></i>
+                    <span class="font-medium tracking-wide">Início / Agente</span>
+                </button>
+
+                <button onclick="switchView('sheets')" id="nav-sheets" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all text-slate-400 hover:bg-purple-900/20 hover:text-purple-300 border border-transparent">
+                    <i class="fa-solid fa-users-viewfinder w-5 text-center text-cyan-400"></i>
+                    <div class="flex flex-col">
+                        <span class="font-medium tracking-wide">Meus Agentes (Fichas)</span>
+                        <span class="text-[9px] text-purple-400 font-mono">Estilo CRIS</span>
+                    </div>
+                </button>
+
+                <button onclick="switchView('shop')" id="nav-shop" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all text-slate-400 hover:bg-purple-900/20 hover:text-purple-300 border border-transparent">
+                    <i class="fa-solid fa-cart-shopping w-5 text-center text-amber-400"></i>
+                    <div class="flex flex-col">
+                        <span class="font-medium tracking-wide">Mercado Limiar</span>
+                        <span class="text-[9px] text-amber-400 font-mono">Armas & Cyberware</span>
+                    </div>
+                </button>
+
+                <button onclick="switchView('tabletop')" id="nav-tabletop" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all text-slate-400 hover:bg-purple-900/20 hover:text-purple-300 border border-transparent">
+                    <i class="fa-solid fa-cubes w-5 text-center text-purple-400"></i>
+                    <span class="font-medium tracking-wide">Mesa Tabletop 2D</span>
+                </button>
+
+                <button onclick="switchView('library')" id="nav-library" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all text-slate-400 hover:bg-purple-900/20 hover:text-purple-300 border border-transparent">
+                    <i class="fa-solid fa-book-skull w-5 text-center text-purple-400"></i>
+                    <span class="font-medium tracking-wide">Biblioteca & Regras</span>
+                </button>
+
+                <button onclick="switchView('campaigns')" id="nav-campaigns" class="nav-btn flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left transition-all text-slate-400 hover:bg-purple-900/20 hover:text-purple-300 border border-transparent">
+                    <i class="fa-solid fa-network-wired w-5 text-center text-cyan-400"></i>
+                    <span class="font-medium tracking-wide">Salas & Campanhas</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- User Info Footer -->
+        <div class="p-4 border-t border-purple-900/40 bg-purple-950/20">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <img id="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full border border-cyan-400 object-cover" alt="User Avatar">
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#070913] rounded-full"></span>
+                    </div>
+                    <div>
+                        <p id="user-display-name" class="font-bold text-sm text-slate-200">Agente_Zero</p>
+                        <p id="user-status-text" class="text-xs text-amber-400 font-mono">CR: ₡ <span id="user-global-credits">1,500</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 h-full overflow-y-auto relative bg-[#05070f]">
+
+        <!-- VIEW 1: LANDING & AUTENTICAÇÃO -->
+        <section id="view-landing" class="view-panel p-6 md:p-10 max-w-6xl mx-auto space-y-10">
+            <div class="relative rounded-2xl p-8 md:p-12 overflow-hidden border border-purple-500/30 bg-gradient-to-r from-purple-950/80 via-slate-900/90 to-cyan-950/80 neon-glow-purple">
+                <div class="absolute -right-10 -bottom-10 opacity-20 pointer-events-none">
+                    <i class="fa-solid fa-shield-halved text-[280px] text-purple-500"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-400/40 text-cyan-300 text-xs font-mono">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                        SISTEMA OFICIAL // LIMIAR RPG v3.0
+                    </div>
+                    <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-500 tracking-wider">
+                        PLATAFORMA LIMIAR RPG
+                    </h1>
+                    <p class="text-slate-300 text-base leading-relaxed">
+                        Inspirado em Ordem Paranormal, D&D, Cyberpunk e Call of Cthulhu. Gerencie múltiplas fichas de Agente (estilo CRIS), faça compras no Mercado Paranormal/Cyberware e participe de mesas virtuais no Tabletop.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="switchView('sheets')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-bold shadow-lg hover:scale-105 transition flex items-center gap-2">
+                            <i class="fa-solid fa-id-card"></i> Acessar Meus Agentes
+                        </button>
+                        <button onclick="switchView('shop')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold shadow-lg hover:scale-105 transition flex items-center gap-2">
+                            <i class="fa-solid fa-cart-shopping"></i> Ir ao Mercado
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGIN / REGISTER DEDICATED SECTION -->
+            <div class="cyber-glass p-8 rounded-2xl border border-purple-500/40 max-w-2xl mx-auto space-y-6">
+                <div class="flex border-b border-purple-900/50 pb-3">
+                    <button id="auth-tab-login" onclick="switchAuthTab('login')" class="flex-1 text-center py-2 font-orbitron font-bold text-cyan-400 border-b-2 border-cyan-400">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i> Entrar na Conta
+                    </button>
+                    <button id="auth-tab-register" onclick="switchAuthTab('register')" class="flex-1 text-center py-2 font-orbitron font-bold text-slate-400 border-b-2 border-transparent hover:text-purple-300">
+                        <i class="fa-solid fa-user-plus me-2"></i> Criar Cadastro
+                    </button>
+                </div>
+
+                <form id="form-login-landing" onsubmit="handleLandingLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-purple-300 mb-1">Codinome do Agente</label>
+                        <input type="text" id="landing-login-user" value="Agente_Zero" required class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-3 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-purple-300 mb-1">Chave de Acesso</label>
+                        <input type="password" value="12345678" required class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-3 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:scale-[1.01] transition">
+                        Acessar Sistema Limiar
+                    </button>
+                </form>
+
+                <form id="form-register-landing" onsubmit="handleLandingRegister(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold text-purple-300 mb-1">Nome do Operador</label>
+                        <input type="text" id="landing-reg-user" placeholder="Ex: Operador_Kael" required class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-3 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-purple-300 mb-1">E-mail Cadastral</label>
+                        <input type="email" placeholder="agente@nexus.limiar" required class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-3 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-purple-300 mb-1">Definir Senha</label>
+                        <input type="password" placeholder="••••••••" required class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-3 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-600 via-teal-600 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:scale-[1.01] transition">
+                        Confirmar Registro & Entrar
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="view-sheets" class="view-panel hidden p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-purple-900/40 pb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-cyan-400 font-orbitron flex items-center gap-3">
+                        <i class="fa-solid fa-users-viewfinder text-purple-400"></i> GERENCIADOR DE AGENTES (CRIS)
+                    </h2>
+                    <p class="text-slate-400 text-sm">Crie, edite e selecione suas fichas do sistema Limiar RPG.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="createNewCharacter()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold hover:opacity-90 transition flex items-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-user-plus"></i> Novo Agente
+                    </button>
+                </div>
+            </div>
+
+            <!-- Characters Grid -->
+            <div id="characters-list-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <!-- SINGLE CHARACTER SHEET DETAIL (EDITING VIEW) -->
+            <div id="single-character-view" class="hidden space-y-6 pt-4 border-t border-purple-900/40">
+                <div class="flex items-center justify-between bg-slate-950/90 p-4 rounded-xl border border-purple-500/30">
+                    <button onclick="hideCharacterDetail()" class="text-xs font-bold text-purple-300 hover:text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para Lista de Agentes
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1.5 text-xs text-amber-400 font-mono font-bold bg-amber-950/40 border border-amber-500/40 px-3 py-1.5 rounded-xl">
+                            <i class="fa-solid fa-coins text-amber-400"></i> Saldo: ₡
+                            <input type="number" id="char-sheet-credits" onchange="updateActiveCharFromInputs()" class="w-24 bg-slate-950 border border-amber-800/60 rounded px-2 py-0.5 font-bold text-amber-300 text-xs focus:outline-none focus:border-amber-400">
+                        </div>
+                        <button onclick="saveCurrentCharacter()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Character Header Card -->
+                <div class="cyber-glass p-6 rounded-2xl border-2 border-purple-500/40 space-y-4 relative overflow-hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
+                        <div class="lg:col-span-2 flex items-center gap-4">
+                            <img id="active-char-avatar" src="" class="w-24 h-24 rounded-2xl border-2 border-cyan-400 object-cover shadow-xl">
+                            <div class="space-y-1 w-full">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-purple-400 font-mono">AGENTE:</span>
+                                    <input type="text" id="active-char-name" onchange="updateActiveCharFromInputs()" class="bg-transparent text-xl md:text-2xl font-black font-orbitron text-cyan-300 focus:bg-slate-900/90 px-2 py-0.5 rounded border border-transparent hover:border-purple-800 w-full">
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <span class="text-slate-500 font-mono">ORIGEM:</span>
+                                        <select id="active-char-origin" onchange="updateActiveCharFromInputs()" class="bg-slate-950 text-purple-300 w-full font-bold p-1 rounded border border-purple-900/60">
+                                            <option value="Militar">Militar</option>
+                                            <option value="Investigador">Investigador</option>
+                                            <option value="Policial">Policial</option>
+                                            <option value="Médico">Médico</option>
+                                            <option value="Hacker">Hacker</option>
+                                            <option value="Ocultista">Ocultista</option>
+                                            <option value="Criminoso">Criminoso</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 font-mono">NATUREZA:</span>
+                                        <select id="active-char-nature" onchange="updateActiveCharFromInputs()" class="bg-slate-950 text-pink-300 w-full font-bold p-1 rounded border border-purple-900/60">
+                                            <option value="Humano">Humano</option>
+                                            <option value="Modificado (Cyber)">Modificado (Cyber)</option>
+                                            <option value="Sobrenatural">Sobrenatural</option>
+                                            <option value="Vampiro">Vampiro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vitals Header -->
+                        <div class="lg:col-span-2 grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-purple-800/50">
+                                <span class="text-[10px] text-purple-400 font-mono uppercase block">HUMANIDADE</span>
+                                <input type="number" id="active-char-humanity" onchange="updateActiveCharFromInputs()" class="bg-transparent text-center font-black text-2xl text-purple-300 w-full mt-1">
+                            </div>
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-purple-800/50">
+                                <span class="text-[10px] text-pink-400 font-mono uppercase block">CORRUPÇÃO</span>
+                                <input type="number" id="active-char-corruption" onchange="updateActiveCharFromInputs()" class="bg-transparent text-center font-black text-2xl text-pink-400 w-full mt-1">
+                            </div>
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-purple-800/50">
+                                <span class="text-[10px] text-cyan-400 font-mono uppercase block">DEFESA</span>
+                                <input type="number" id="active-char-defense" onchange="updateActiveCharFromInputs()" class="bg-transparent text-center font-black text-2xl text-cyan-300 w-full mt-1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="cyber-glass p-5 rounded-2xl border-t-4 border-t-emerald-500 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-emerald-400 flex items-center gap-2 font-orbitron text-sm">
+                                <i class="fa-solid fa-heart-pulse"></i> PONTOS DE VIDA (PV)
+                            </span>
+                            <span class="text-xs font-mono text-emerald-300" id="pv-text">45/45</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-3.5 overflow-hidden border border-emerald-900/60 p-0.5">
+                            <div id="pv-bar-inner" class="bg-gradient-to-r from-emerald-600 to-teal-400 h-full rounded-full w-full transition-all"></div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-slate-400 font-mono">ATUAL / MÁX:</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="pv-current" onchange="updateVitalsUI()" class="w-14 bg-slate-950 border border-purple-800/40 rounded p-1 text-center font-bold text-emerald-300">
+                                <span class="text-slate-500">/</span>
+                                <input type="number" id="pv-max" onchange="updateVitalsUI()" class="w-14 bg-slate-950 border border-purple-800/40 rounded p-1 text-center font-bold text-slate-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-glass p-5 rounded-2xl border-t-4 border-t-purple-500 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-purple-400 flex items-center gap-2 font-orbitron text-sm">
+                                <i class="fa-solid fa-brain"></i> SANIDADE (SAN)
+                            </span>
+                            <span class="text-xs font-mono text-purple-300" id="san-text">30/30</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-3.5 overflow-hidden border border-purple-900/60 p-0.5">
+                            <div id="san-bar-inner" class="bg-gradient-to-r from-purple-600 to-pink-500 h-full rounded-full w-full transition-all"></div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-slate-400 font-mono">ATUAL / MÁX:</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="san-current" onchange="updateVitalsUI()" class="w-14 bg-slate-950 border border-purple-800/40 rounded p-1 text-center font-bold text-purple-300">
+                                <span class="text-slate-500">/</span>
+                                <input type="number" id="san-max" onchange="updateVitalsUI()" class="w-14 bg-slate-950 border border-purple-800/40 rounded p-1 text-center font-bold text-slate-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-glass p-5 rounded-2xl border-t-4 border-t-cyan-500 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-cyan-400 flex items-center gap-2 font-orbitron text-sm">
+                                <i class="fa-solid fa-bolt"></i> ESFORÇO (PE)
+                            </span>
+                            <span class="text-xs font-mono text-cyan-300" id="pe-text">20/20</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-3.5 overflow-hidden border border-cyan-900/60 p-0.5">
+                            <div id="pe-bar-inner" class="bg-gradient-to-r from-cyan-600 to-blue-400 h-full rounded-full w-full transition-all"></div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-slate-400 font-mono">ATUAL / MÁX:</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="pe-current" onchange="updateVitalsUI()" class="w-14 bg-slate-950 border border-purple-800/40 rounded p-1 text-center font-bold text-cyan-300">
+                                <span class="text-slate-500">/</span>
+                                <input type="number" id="pe-max" onchange="updateVitalsUI()" class="w-14 bg-slate-950 border border-purple-800/40 rounded p-1 text-center font-bold text-slate-400">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-cyan-400 font-orbitron flex items-center gap-2">
+                        <i class="fa-solid fa-shield-cat text-purple-400"></i> ATRIBUTOS (5 ATRIBUTOS DO LIMIAR RPG)
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                        <div class="cyber-glass p-4 rounded-xl text-center space-y-1 border border-purple-800/40">
+                            <span class="text-[10px] font-bold text-purple-400 font-mono block">FOR (FORÇA)</span>
+                            <input type="number" id="attr-for" onchange="updateActiveCharFromInputs()" class="w-full bg-slate-950 text-center font-black text-2xl text-cyan-300 rounded border border-purple-900/50 p-1">
+                            <button onclick="rollAttr('FORÇA', 'attr-for')" class="text-[10px] text-cyan-400 hover:underline">Rolar d20</button>
+                        </div>
+
+                        <div class="cyber-glass p-4 rounded-xl text-center space-y-1 border border-purple-800/40">
+                            <span class="text-[10px] font-bold text-purple-400 font-mono block">AGI (AGILIDADE)</span>
+                            <input type="number" id="attr-agi" onchange="updateActiveCharFromInputs()" class="w-full bg-slate-950 text-center font-black text-2xl text-cyan-300 rounded border border-purple-900/50 p-1">
+                            <button onclick="rollAttr('AGILIDADE', 'attr-agi')" class="text-[10px] text-cyan-400 hover:underline">Rolar d20</button>
+                        </div>
+
+                        <div class="cyber-glass p-4 rounded-xl text-center space-y-1 border border-purple-800/40">
+                            <span class="text-[10px] font-bold text-purple-400 font-mono block">VIG (VIGOR)</span>
+                            <input type="number" id="attr-vig" onchange="updateActiveCharFromInputs()" class="w-full bg-slate-950 text-center font-black text-2xl text-cyan-300 rounded border border-purple-900/50 p-1">
+                            <button onclick="rollAttr('VIGOR', 'attr-vig')" class="text-[10px] text-cyan-400 hover:underline">Rolar d20</button>
+                        </div>
+
+                        <div class="cyber-glass p-4 rounded-xl text-center space-y-1 border border-purple-800/40">
+                            <span class="text-[10px] font-bold text-purple-400 font-mono block">INT (INTELIGÊNCIA)</span>
+                            <input type="number" id="attr-int" onchange="updateActiveCharFromInputs()" class="w-full bg-slate-950 text-center font-black text-2xl text-cyan-300 rounded border border-purple-900/50 p-1">
+                            <button onclick="rollAttr('INTELIGÊNCIA', 'attr-int')" class="text-[10px] text-cyan-400 hover:underline">Rolar d20</button>
+                        </div>
+
+                        <div class="cyber-glass p-4 rounded-xl text-center space-y-1 border border-purple-800/40 col-span-2 sm:col-span-1">
+                            <span class="text-[10px] font-bold text-purple-400 font-mono block">CAR (CARISMA)</span>
+                            <input type="number" id="attr-car" onchange="updateActiveCharFromInputs()" class="w-full bg-slate-950 text-center font-black text-2xl text-cyan-300 rounded border border-purple-900/50 p-1">
+                            <button onclick="rollAttr('CARISMA', 'attr-car')" class="text-[10px] text-cyan-400 hover:underline">Rolar d20</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Skills -->
+                    <div class="lg:col-span-1 cyber-glass p-5 rounded-2xl border border-purple-500/30 space-y-4">
+                        <h3 class="text-base font-bold text-purple-300 font-orbitron flex items-center justify-between">
+                            <span><i class="fa-solid fa-list-check text-cyan-400 me-2"></i> PERÍCIAS</span>
+                            <span class="text-[10px] font-mono text-purple-400">TESTES d20</span>
+                        </h3>
+                        <div id="skills-list-container" class="space-y-1.5 max-h-[380px] overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- Inventory & Cyberware -->
+                    <div class="lg:col-span-2 space-y-5">
+                        <div class="cyber-glass p-5 rounded-2xl border border-purple-500/30 space-y-3">
+                            <div class="flex items-center justify-between border-b border-purple-900/40 pb-2">
+                                <h3 class="text-base font-bold text-amber-300 font-orbitron flex items-center gap-2">
+                                    <i class="fa-solid fa-box text-amber-400"></i> INVENTÁRIO & CYBERWARE
+                                </h3>
+                                <button onclick="switchView('shop')" class="text-xs text-cyan-400 hover:underline font-bold">
+                                    + Comprar no Mercado
+                                </button>
+                            </div>
+                            <div id="char-inventory-list" class="space-y-2 max-h-[300px] overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-shop" class="view-panel hidden p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-purple-900/40 pb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-amber-400 font-orbitron flex items-center gap-3">
+                        <i class="fa-solid fa-cart-shopping text-amber-500"></i> MERCADO LIMIAR & CYBERWARE
+                    </h2>
+                    <p class="text-slate-400 text-sm">Adquira armas, cyberwares, rituais e suprimentos para seus Agentes.</p>
+                </div>
+                <div class="cyber-glass px-4 py-2 rounded-xl border border-amber-500/40 flex items-center gap-3">
+                    <span class="text-xs text-slate-400">Comprando para Agente:</span>
+                    <span id="shop-active-agent-name" class="font-bold text-cyan-300 font-orbitron">Nenhum Selecionado</span>
+                    <span class="text-amber-400 font-mono font-bold">₡<span id="shop-active-agent-credits">0</span></span>
+                </div>
+            </div>
+
+            <!-- Shop Category Tabs -->
+            <div class="flex flex-wrap gap-2 border-b border-purple-900/40 pb-3">
+                <button onclick="filterShopCategory('all')" class="shop-cat-btn active px-4 py-2 rounded-lg bg-amber-500/20 text-amber-300 font-bold text-xs border border-amber-500/40">Todos</button>
+                <button onclick="filterShopCategory('armas')" class="shop-cat-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 font-bold text-xs hover:text-amber-300 border border-transparent">Armas</button>
+                <button onclick="filterShopCategory('cyberware')" class="shop-cat-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 font-bold text-xs hover:text-amber-300 border border-transparent">Cyberware</button>
+                <button onclick="filterShopCategory('protecao')" class="shop-cat-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 font-bold text-xs hover:text-amber-300 border border-transparent">Proteções</button>
+                <button onclick="filterShopCategory('ituais')" class="shop-cat-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 font-bold text-xs hover:text-amber-300 border border-transparent">Rituais & Focos</button>
+                <button onclick="filterShopCategory('amaldicoado')" class="shop-cat-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 font-bold text-xs hover:text-amber-300 border border-transparent">Itens Amaldiçoados</button>
+            </div>
+
+            <div id="shop-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="view-tabletop" class="view-panel hidden h-full flex flex-col md:flex-row">
+            <div class="flex-1 relative bg-slate-950 flex items-center justify-center overflow-hidden border-r border-purple-900/40 min-h-[450px]">
+                <canvas id="vtt-canvas" class="cursor-crosshair shadow-2xl rounded-lg border border-purple-500/20"></canvas>
+
+                <div class="absolute top-4 left-4 flex flex-wrap items-center gap-2 bg-slate-900/90 p-2 rounded-xl border border-purple-500/40 backdrop-blur-md z-10 shadow-xl">
+                    <button onclick="toggleGrid()" id="btn-grid" class="p-2 px-3 rounded-lg bg-purple-900/50 text-cyan-300 hover:bg-purple-800 transition text-xs font-bold">
+                        <i class="fa-solid fa-border-all me-1"></i> Grid
+                    </button>
+                    
+                    <label class="p-2 px-3 rounded-lg bg-slate-800 hover:bg-purple-900/40 text-purple-300 transition text-xs font-bold cursor-pointer">
+                        <i class="fa-solid fa-image me-1"></i> Subir Mapa
+                        <input type="file" id="map-upload-file" accept="image/*" class="hidden" onchange="uploadMapFile(event)">
+                    </label>
+
+                    <button onclick="openModal('map-url-modal')" class="p-2 rounded-lg bg-slate-800 hover:bg-purple-900/40 text-purple-300 transition text-xs">
+                        <i class="fa-solid fa-link"></i>
+                    </button>
+
+                    <div class="h-5 w-px bg-purple-900/60 mx-1"></div>
+
+                    <div class="flex items-center gap-2 px-2 bg-slate-950/80 rounded-lg border border-purple-900/50 py-1">
+                        <span class="text-[10px] text-purple-400 font-bold uppercase"><i class="fa-solid fa-magnifying-glass-plus"></i> Escala:</span>
+                        <input type="range" id="map-scale-slider" min="0.5" max="3.0" step="0.1" value="1.0" oninput="changeMapScale(this.value)" class="w-20 accent-cyan-400 cursor-pointer">
+                        <span id="map-scale-val" class="text-xs font-mono text-cyan-300">1.0x</span>
+                    </div>
+
+                    <button onclick="openModal('add-token-modal')" class="p-2 px-3 rounded-lg bg-cyan-950 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-900 transition text-xs font-bold shadow">
+                        <i class="fa-solid fa-user-plus me-1"></i> Criar Token
+                    </button>
+                </div>
+
+                <div id="token-control-panel" class="absolute bottom-4 left-4 bg-slate-900/90 border border-cyan-500/40 p-3 rounded-xl backdrop-blur-md hidden z-10 flex items-center gap-4 shadow-2xl">
+                    <img id="sel-token-img" src="" class="w-10 h-10 rounded-full border-2 border-cyan-400 object-cover">
+                    <div>
+                        <h4 id="sel-token-name" class="font-bold text-sm text-cyan-300 font-orbitron">Token Selected</h4>
+                        <p id="sel-token-coords" class="text-[10px] text-purple-400 font-mono">X: 0 | Y: 0</p>
+                    </div>
+
+                    <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-purple-900">
+                        <button onclick="adjustSelectedTokenSize(-5)" class="w-6 h-6 rounded bg-purple-900/60 hover:bg-purple-800 text-cyan-300 font-bold text-xs flex items-center justify-center">-</button>
+                        <span id="sel-token-size-val" class="text-xs font-bold text-cyan-300 px-1 font-mono">22px</span>
+                        <button onclick="adjustSelectedTokenSize(5)" class="w-6 h-6 rounded bg-purple-900/60 hover:bg-purple-800 text-cyan-300 font-bold text-xs flex items-center justify-center">+</button>
+                    </div>
+
+                    <button onclick="deleteSelectedToken()" class="p-2 text-rose-400 hover:text-rose-200 bg-rose-950/40 rounded-lg border border-rose-900/40">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full md:w-80 bg-[#0a0e1a] p-4 flex flex-col justify-between space-y-4 border-l border-purple-900/40 overflow-y-auto">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-purple-900/40 pb-2">
+                        <h3 class="font-bold text-cyan-400 font-orbitron flex items-center gap-2">
+                            <i class="fa-solid fa-dice-d20 text-purple-400"></i> ROLADOR D20 / DADOS
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="rollDice(4)" class="p-2.5 rounded-lg bg-slate-900 border border-purple-800/40 hover:border-cyan-400 text-cyan-300 font-bold transition flex flex-col items-center">
+                            <span class="text-[10px] text-purple-400">D4</span>
+                            <i class="fa-solid fa-play text-xs -rotate-90"></i>
+                        </button>
+                        <button onclick="rollDice(6)" class="p-2.5 rounded-lg bg-slate-900 border border-purple-800/40 hover:border-cyan-400 text-cyan-300 font-bold transition flex flex-col items-center">
+                            <span class="text-[10px] text-purple-400">D6</span>
+                            <i class="fa-solid fa-dice-d6 text-xs"></i>
+                        </button>
+                        <button onclick="rollDice(10)" class="p-2.5 rounded-lg bg-slate-900 border border-purple-800/40 hover:border-cyan-400 text-cyan-300 font-bold transition flex flex-col items-center">
+                            <span class="text-[10px] text-purple-400">D10</span>
+                            <i class="fa-solid fa-diamond text-xs"></i>
+                        </button>
+                        <button onclick="rollDice(20)" class="p-2.5 rounded-lg bg-slate-900 border border-purple-800/40 hover:border-cyan-400 text-cyan-300 font-bold transition flex flex-col items-center neon-glow-purple">
+                            <span class="text-[10px] text-cyan-400">D20</span>
+                            <i class="fa-solid fa-dice-d20 text-xs text-cyan-300"></i>
+                        </button>
+                    </div>
+
+                    <div id="last-roll-card" class="cyber-glass p-4 rounded-xl text-center space-y-1">
+                        <span class="text-[10px] text-purple-400 font-mono uppercase tracking-widest" id="roll-label">Aguardando Rolagem</span>
+                        <div class="text-4xl font-black text-cyan-300 font-orbitron" id="roll-result">--</div>
+                        <p class="text-xs text-slate-400" id="roll-breakdown">Selecione um dado acima</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Histórico</span>
+                        <div id="dice-log" class="h-44 bg-slate-950/80 rounded-xl p-3 border border-purple-900/40 overflow-y-auto space-y-2 text-xs font-mono">
+                            <div class="text-slate-500 italic">[SISTEMA] Tabletop pronto.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-library" class="view-panel hidden p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-purple-900/40 pb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-cyan-400 font-orbitron">BIBLIOTECA LIMIAR RPG</h2>
+                    <p class="text-slate-400 text-sm">Consulte as regras do PDF do Limiar RPG (Atributos, Origens, Naturezas e Rituais).</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="cyber-glass p-6 rounded-xl space-y-3">
+                    <h3 class="text-lg font-bold text-purple-300 font-orbitron flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-cyan-400"></i> Atributos Oficiais (5)
+                    </h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <b>FORÇA (FOR):</b> Potência física, combate corpo a corpo e esforço.<br>
+                        <b>AGILIDADE (AGI):</b> Reflexos, velocidade, furtividade e pontaria.<br>
+                        <b>VIGOR (VIG):</b> Resistência, saúde e capacidade de suportar ferimentos.<br>
+                        <b>INTELIGÊNCIA (INT):</b> Investigação, conhecimento, tecnologia e raciocínio.<br>
+                        <b>CARISMA (CAR):</b> Influência, percepção social, liderança e força de personalidade.
+                    </p>
+                </div>
+
+                <div class="cyber-glass p-6 rounded-xl space-y-3">
+                    <h3 class="text-lg font-bold text-purple-300 font-orbitron flex items-center gap-2">
+                        <i class="fa-solid fa-brain text-pink-400"></i> Sanidade & Corrupção
+                    </h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Quanto mais você atravessa o Véu e utiliza Cyberware ou Rituais Paranormais, mais consome sua Humanidade e Sanidade, acumulando Corrupção.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-campaigns" class="view-panel hidden p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-purple-900/40 pb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-cyan-400 font-orbitron">SALAS & CAMPANHAS</h2>
+                    <p class="text-slate-400 text-sm">Crie ou participe de sessões de RPG com seus amigos.</p>
+                </div>
+                <button onclick="openModal('create-room-modal')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-bold hover:opacity-90 transition flex items-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-plus"></i> Criar Nova Sala
+                </button>
+            </div>
+
+            <div id="campaigns-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
+    </main>
+
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <!-- MODAL: ADD TOKEN -->
+        <div id="add-token-modal" class="modal-card hidden cyber-glass p-6 rounded-2xl max-w-md w-full border border-purple-500/40 space-y-4">
+            <div class="flex justify-between items-center border-b border-purple-900/40 pb-3">
+                <h3 class="font-bold text-cyan-400 font-orbitron">CRIAR TOKEN PARA O TABLETOP</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="addNewToken(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 mb-1">Nome do Token</label>
+                    <input type="text" id="token-name" required placeholder="Ex: Dante Vance / Inimigo" class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-2.5 text-sm text-cyan-300 focus:outline-none focus:border-cyan-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 mb-1">URL da Imagem / Avatar</label>
+                    <input type="url" id="token-img-url" placeholder="https://..." class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-2.5 text-sm text-cyan-300 focus:outline-none focus:border-cyan-400">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-bold rounded-xl shadow hover:opacity-90 transition">
+                    Adicionar Token
+                </button>
+            </form>
+        </div>
+
+        <!-- MODAL: MAP URL -->
+        <div id="map-url-modal" class="modal-card hidden cyber-glass p-6 rounded-2xl max-w-md w-full border border-purple-500/40 space-y-4">
+            <div class="flex justify-between items-center border-b border-purple-900/40 pb-3">
+                <h3 class="font-bold text-cyan-400 font-orbitron">CARREGAR MAPA POR URL</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="loadMapFromUrl(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 mb-1">Link Direto da Imagem</label>
+                    <input type="url" id="map-url-input" required placeholder="https://i.imgur.com/..." class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-2.5 text-sm text-cyan-300 focus:outline-none focus:border-cyan-400">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold rounded-xl shadow hover:opacity-90 transition">
+                    Carregar Mapa
+                </button>
+            </form>
+        </div>
+
+        <!-- MODAL: CREATE ROOM -->
+        <div id="create-room-modal" class="modal-card hidden cyber-glass p-6 rounded-2xl max-w-md w-full border border-purple-500/40 space-y-4">
+            <div class="flex justify-between items-center border-b border-purple-900/40 pb-3">
+                <h3 class="font-bold text-cyan-400 font-orbitron">CRIAR NOVA SALA / CAMPANHA</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="createNewRoom(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 mb-1">Nome da Sala</label>
+                    <input type="text" id="room-name" required placeholder="Ex: Operação Érebo" class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-2.5 text-sm text-cyan-300 focus:outline-none focus:border-cyan-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-300 mb-1">Descrição Breve</label>
+                    <textarea id="room-desc" required placeholder="Descreva a premissa da missão..." class="w-full bg-slate-950 border border-purple-800/60 rounded-xl p-2.5 text-sm text-cyan-300 h-24 focus:outline-none focus:border-cyan-400"></textarea>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-bold rounded-xl shadow hover:opacity-90 transition">
+                    Criar Sala
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ================================================================= -->
+    <!-- [3. SEÇÃO DE LÓGICA - JAVASCRIPT]                                 -->
+    <!-- (Se desejar separar em arquivo externo, copie todo o conteúdo    -->
+    <!--  abaixo para um arquivo 'app.js')                                 -->
+    <!-- ================================================================= -->
+    <script>
+        const state = {
+            currentUser: {
+                name: "Agente_Zero",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+            },
+            activeCharacterId: 1,
+            characters: [
+                {
+                    id: 1,
+                    name: "Dante Vance",
+                    origin: "Hacker",
+                    nature: "Modificado (Cyber)",
+                    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+                    credits: 2500,
+                    defense: 16,
+                    humanity: 75,
+                    corruption: 25,
+                    vitals: { pv: 45, pvMax: 45, san: 30, sanMax: 30, pe: 20, peMax: 20 },
+                    attrs: { for: 1, agi: 3, vig: 2, int: 4, car: 2 },
+                    inventory: [
+                        { id: 101, name: "Pistola Tática Cyber", type: "Arma", desc: "1d10 + AGI (Balístico/Energia)", price: 800 },
+                        { id: 102, name: "Implante Subcutâneo de Crânio", type: "Cyberware", desc: "+2 em testes de Tecnologia e Hacking", price: 1200 }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Kaelen Hex",
+                    origin: "Ocultista",
+                    nature: "Sobrenatural",
+                    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+                    credits: 1100,
+                    defense: 14,
+                    humanity: 50,
+                    corruption: 50,
+                    vitals: { pv: 38, pvMax: 38, san: 45, sanMax: 45, pe: 35, peMax: 35 },
+                    attrs: { for: 1, agi: 2, vig: 2, int: 5, car: 3 },
+                    inventory: [
+                        { id: 103, name: "Grimório de Símbolos Paranormais", type: "Item", desc: "Foco de Conjuração", price: 500 }
+                    ]
+                }
+            ],
+            shopCatalog: [
+                { id: 1, name: "Pistola Cyber-Tática", cat: "armas", price: 800, desc: "Dano 1d10. Leve e precisa em combates urbanos." },
+                { id: 2, name: "Lâmina Monomolecular", cat: "armas", price: 1200, desc: "Dano 1d8 + FOR. Corta blindagens com facilidade." },
+                { id: 3, name: "Fuzil de Plasma Limiar", cat: "armas", price: 2500, desc: "Dano 2d10. Requer Licença Militar ou Clandestina." },
+                { id: 4, name: "Olho Cibernético Kiroshi v2", cat: "cyberware", price: 1500, desc: "Garante visão noturna e +3 em Percepção e Tecnologia." },
+                { id: 5, name: "Subdermal Armor System", cat: "cyberware", price: 2200, desc: "+4 na Defesa total. Reduz Humanidade em 5." },
+                { id: 6, name: "Processador Neural Reflex", cat: "cyberware", price: 1800, desc: "+2 em Agilidade e testes de Reflexo." },
+                { id: 7, name: "Colete de Kelvar Tático", cat: "protecao", price: 600, desc: "+3 em Defesa sem comprometer o deslocamento." },
+                { id: 8, name: "Escudo de Força Portátil", cat: "protecao", price: 1400, desc: "+5 na Defesa temporária quando ativado." },
+                { id: 9, name: "Foco de Conjuração Paranormal", cat: "ituais", price: 500, desc: "Reduz em 1 PE o custo de Rituais." },
+                { id: 10, name: "Grimório das Sombras do Outro Lado", cat: "ituais", price: 2000, desc: "Permite aprender Rituais de Mente e Sangue." },
+                { id: 11, name: "Relíquia Obscura de Lodo", cat: "amaldicoado", price: 3500, desc: "Concede +10 PV Máximos, porém gera +10 de Corrupção." }
+            ],
+            skills: [
+                { name: "Acrobacia", attr: "AGI", bonus: 5 },
+                { name: "Atletismo", attr: "FOR", bonus: 3 },
+                { name: "Atualidades", attr: "INT", bonus: 5 },
+                { name: "Ciência", attr: "INT", bonus: 8 },
+                { name: "Enganação", attr: "CAR", bonus: 4 },
+                { name: "Fortitude", attr: "VIG", bonus: 5 },
+                { name: "Furtividade", attr: "AGI", bonus: 6 },
+                { name: "Iniciativa", attr: "AGI", bonus: 7 },
+                { name: "Investigação", attr: "INT", bonus: 10 },
+                { name: "Luta", attr: "FOR", bonus: 2 },
+                { name: "Medicina", attr: "INT", bonus: 5 },
+                { name: "Ocultismo", attr: "INT", bonus: 10 },
+                { name: "Percepção", attr: "CAR", bonus: 5 },
+                { name: "Persuasão", attr: "CAR", bonus: 6 },
+                { name: "Pontaria", attr: "AGI", bonus: 8 },
+                { name: "Reflexos", attr: "AGI", bonus: 5 },
+                { name: "Tecnologia", attr: "INT", bonus: 10 },
+                { name: "Vontade", attr: "CAR", bonus: 5 }
+            ],
+            campaigns: [
+                { id: 'NX-8802', title: "O Enigma de Neo-Veritas", master: "Mestre_Kael", players: "4/5", active: true, desc: "Investigação sobre o lodo paranormal." }
+            ],
+            mapImage: null,
+            mapScale: 1.0,
+            gridEnabled: true,
+            tokens: [],
+            selectedToken: null
+        };
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-purple-900/40', 'text-cyan-300', 'border-cyan-500/30');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            const activeView = document.getElementById(`view-${viewId}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`nav-${viewId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-purple-900/40', 'text-cyan-300', 'border-cyan-500/30');
+                activeBtn.classList.remove('text-slate-400', 'border-transparent');
+            }
+
+            if (viewId === 'sheets') {
+                renderCharactersGrid();
+                const char = getActiveChar();
+                if (char) {
+                    const sheetCreditsInput = document.getElementById('char-sheet-credits');
+                    if (sheetCreditsInput) sheetCreditsInput.value = char.credits;
+                    renderCharInventory();
+                }
+            }
+            if (viewId === 'shop') renderShop();
+            if (viewId === 'tabletop') resizeCanvas();
+            if (viewId === 'campaigns') renderCampaigns();
+        }
+
+        function switchAuthTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('form-login-landing').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register-landing').classList.toggle('hidden', isLogin);
+        }
+
+        function handleLandingLogin(e) {
+            e.preventDefault();
+            showNotification(`Conectado ao Limiar RPG!`);
+            switchView('sheets');
+        }
+
+        function handleLandingRegister(e) {
+            e.preventDefault();
+            showNotification(`Cadastro efetuado!`);
+            switchView('sheets');
+        }
+
+        function renderCharactersGrid() {
+            const container = document.getElementById('characters-list-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            state.characters.forEach(char => {
+                const isActive = char.id === state.activeCharacterId;
+                const card = document.createElement('div');
+                card.className = `cyber-glass p-5 rounded-2xl border-2 ${isActive ? 'border-cyan-400 neon-glow-cyan' : 'border-purple-800/40'} flex flex-col justify-between space-y-4 hover:border-cyan-300 transition relative`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <img src="${char.avatar}" class="w-16 h-16 rounded-xl border border-cyan-400 object-cover">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-lg text-slate-100 font-orbitron">${char.name}</h3>
+                                ${isActive ? '<span class="bg-cyan-950 border border-cyan-400 text-cyan-300 text-[9px] px-2 py-0.5 rounded font-mono">ATIVO</span>' : ''}
+                            </div>
+                            <p class="text-xs text-purple-300">${char.origin} // ${char.nature}</p>
+                            <p class="text-xs text-amber-400 font-mono mt-1">Créditos: ₡${char.credits}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-5 gap-1 bg-slate-950/80 p-2 rounded-xl text-center text-xs font-mono">
+                        <div><span class="text-purple-400 text-[9px] block">FOR</span><b class="text-cyan-300">${char.attrs.for}</b></div>
+                        <div><span class="text-purple-400 text-[9px] block">AGI</span><b class="text-cyan-300">${char.attrs.agi}</b></div>
+                        <div><span class="text-purple-400 text-[9px] block">VIG</span><b class="text-cyan-300">${char.attrs.vig}</b></div>
+                        <div><span class="text-purple-400 text-[9px] block">INT</span><b class="text-cyan-300">${char.attrs.int}</b></div>
+                        <div><span class="text-purple-400 text-[9px] block">CAR</span><b class="text-cyan-300">${char.attrs.car}</b></div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-purple-900/40">
+                        <button onclick="deleteCharacter(${char.id})" class="text-rose-400 hover:text-rose-200 text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-trash"></i> Excluir
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="selectActiveCharacter(${char.id})" class="px-3 py-1.5 bg-purple-900/60 hover:bg-purple-800 text-purple-200 text-xs font-bold rounded-lg border border-purple-500/40">
+                                ${isActive ? 'Selecionado' : 'Tornar Ativo'}
+                            </button>
+                            <button onclick="openCharacterDetail(${char.id})" class="px-3 py-1.5 bg-gradient-to-r from-cyan-600 to-purple-600 text-white text-xs font-bold rounded-lg shadow">
+                                Abrir Ficha
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function createNewCharacter() {
+            const newChar = {
+                id: Date.now(),
+                name: `Novo Agente #${state.characters.length + 1}`,
+                origin: "Investigador",
+                nature: "Humano",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+                credits: 1500,
+                defense: 15,
+                humanity: 100,
+                corruption: 0,
+                vitals: { pv: 40, pvMax: 40, san: 40, sanMax: 40, pe: 20, peMax: 20 },
+                attrs: { for: 1, agi: 1, vig: 1, int: 1, car: 1 },
+                inventory: []
+            };
+
+            state.characters.push(newChar);
+            state.activeCharacterId = newChar.id;
+            renderCharactersGrid();
+            openCharacterDetail(newChar.id);
+            showNotification(`Nova ficha criada para ${newChar.name}!`);
+        }
+
+        function deleteCharacter(id) {
+            if (state.characters.length <= 1) {
+                showNotification("Você precisa ter pelo menos uma ficha de Agente.");
+                return;
+            }
+            state.characters = state.characters.filter(c => c.id !== id);
+            if (state.activeCharacterId === id) {
+                state.activeCharacterId = state.characters[0].id;
+            }
+            renderCharactersGrid();
+            showNotification("Ficha de Agente removida.");
+        }
+
+        function selectActiveCharacter(id) {
+            state.activeCharacterId = id;
+            renderCharactersGrid();
+            const char = getActiveChar();
+            if (char) {
+                document.getElementById('user-global-credits').textContent = char.credits.toLocaleString();
+                showNotification(`Agente ativo alterado para ${char.name}`);
+            }
+        }
+
+        function getActiveChar() {
+            return state.characters.find(c => c.id === state.activeCharacterId) || state.characters[0];
+        }
+
+        function openCharacterDetail(id) {
+            state.activeCharacterId = id;
+            const char = getActiveChar();
+
+            document.getElementById('single-character-view').classList.remove('hidden');
+            document.getElementById('char-sheet-credits').value = char.credits;
+            document.getElementById('active-char-avatar').src = char.avatar;
+            document.getElementById('active-char-name').value = char.name;
+            document.getElementById('active-char-origin').value = char.origin;
+            document.getElementById('active-char-nature').value = char.nature;
+            document.getElementById('active-char-humanity').value = char.humanity;
+            document.getElementById('active-char-corruption').value = char.corruption;
+            document.getElementById('active-char-defense').value = char.defense;
+
+            // Vitals
+            document.getElementById('pv-current').value = char.vitals.pv;
+            document.getElementById('pv-max').value = char.vitals.pvMax;
+            document.getElementById('san-current').value = char.vitals.san;
+            document.getElementById('san-max').value = char.vitals.sanMax;
+            document.getElementById('pe-current').value = char.vitals.pe;
+            document.getElementById('pe-max').value = char.vitals.peMax;
+
+            // 5 Atributos Limiar RPG
+            document.getElementById('attr-for').value = char.attrs.for;
+            document.getElementById('attr-agi').value = char.attrs.agi;
+            document.getElementById('attr-vig').value = char.attrs.vig;
+            document.getElementById('attr-int').value = char.attrs.int;
+            document.getElementById('attr-car').value = char.attrs.car;
+
+            updateVitalsUI();
+            renderSkills();
+            renderCharInventory();
+        }
+
+        function hideCharacterDetail() {
+            document.getElementById('single-character-view').classList.add('hidden');
+        }
+
+        function updateActiveCharFromInputs() {
+            const char = getActiveChar();
+            if (!char) return;
+
+            char.name = document.getElementById('active-char-name').value;
+            char.origin = document.getElementById('active-char-origin').value;
+            char.nature = document.getElementById('active-char-nature').value;
+            char.credits = parseInt(document.getElementById('char-sheet-credits').value) || 0;
+            char.humanity = parseInt(document.getElementById('active-char-humanity').value) || 0;
+            char.corruption = parseInt(document.getElementById('active-char-corruption').value) || 0;
+            char.defense = parseInt(document.getElementById('active-char-defense').value) || 10;
+
+            char.attrs.for = parseInt(document.getElementById('attr-for').value) || 0;
+            char.attrs.agi = parseInt(document.getElementById('attr-agi').value) || 0;
+            char.attrs.vig = parseInt(document.getElementById('attr-vig').value) || 0;
+            char.attrs.int = parseInt(document.getElementById('attr-int').value) || 0;
+            char.attrs.car = parseInt(document.getElementById('attr-car').value) || 0;
+
+            document.getElementById('user-global-credits').textContent = char.credits.toLocaleString();
+        }
+
+        function updateVitalsUI() {
+            const char = getActiveChar();
+            if (!char) return;
+
+            char.vitals.pv = parseInt(document.getElementById('pv-current').value) || 0;
+            char.vitals.pvMax = parseInt(document.getElementById('pv-max').value) || 1;
+            char.vitals.san = parseInt(document.getElementById('san-current').value) || 0;
+            char.vitals.sanMax = parseInt(document.getElementById('san-max').value) || 1;
+            char.vitals.pe = parseInt(document.getElementById('pe-current').value) || 0;
+            char.vitals.peMax = parseInt(document.getElementById('pe-max').value) || 1;
+
+            document.getElementById('pv-text').textContent = `${char.vitals.pv}/${char.vitals.pvMax}`;
+            document.getElementById('pv-bar-inner').style.width = `${Math.min(100, Math.max(0, (char.vitals.pv / char.vitals.pvMax) * 100))}%`;
+
+            document.getElementById('san-text').textContent = `${char.vitals.san}/${char.vitals.sanMax}`;
+            document.getElementById('san-bar-inner').style.width = `${Math.min(100, Math.max(0, (char.vitals.san / char.vitals.sanMax) * 100))}%`;
+
+            document.getElementById('pe-text').textContent = `${char.vitals.pe}/${char.vitals.peMax}`;
+            document.getElementById('pe-bar-inner').style.width = `${Math.min(100, Math.max(0, (char.vitals.pe / char.vitals.peMax) * 100))}%`;
+        }
+
+        function saveCurrentCharacter() {
+            updateActiveCharFromInputs();
+            updateVitalsUI();
+            renderCharactersGrid();
+            showNotification(`Ficha de ${getActiveChar().name} salva com sucesso!`);
+        }
+
+        function renderCharInventory() {
+            const container = document.getElementById('char-inventory-list');
+            const char = getActiveChar();
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (char.inventory.length === 0) {
+                container.innerHTML = `<div class="text-xs text-slate-500 italic p-3 text-center">Nenhum item ou cyberware no inventário. Acesse o Mercado para adquirir.</div>`;
+                return;
+            }
+
+            char.inventory.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "bg-slate-950/80 p-3 rounded-xl border border-purple-900/50 flex items-center justify-between";
+                row.innerHTML = `
+                    <div>
+                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 font-mono me-2 border border-purple-800">${item.type}</span>
+                        <h4 class="font-bold text-sm text-cyan-300 inline">${item.name}</h4>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">${item.desc}</p>
+                    </div>
+                    <button onclick="removeFromInventory(${item.id})" class="text-rose-400 hover:text-rose-200 text-xs p-1" title="Vender/Remover">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function removeFromInventory(itemId) {
+            const char = getActiveChar();
+            char.inventory = char.inventory.filter(i => i.id !== itemId);
+            renderCharInventory();
+            renderCharactersGrid();
+            showNotification("Item removido do inventário.");
+        }
+
+        let currentShopFilter = 'all';
+
+        function renderShop() {
+            const char = getActiveChar();
+            document.getElementById('shop-active-agent-name').textContent = char ? char.name : 'Nenhum';
+            document.getElementById('shop-active-agent-credits').textContent = char ? char.credits : 0;
+
+            const container = document.getElementById('shop-items-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const items = currentShopFilter === 'all' 
+                ? state.shopCatalog 
+                : state.shopCatalog.filter(i => i.cat === currentShopFilter);
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "cyber-glass p-5 rounded-2xl border border-amber-500/30 space-y-3 flex flex-col justify-between hover:border-amber-400 transition";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-mono uppercase border border-amber-800">${item.cat}</span>
+                            <span class="text-sm font-bold text-amber-400 font-mono">₡${item.price}</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-100 font-orbitron mt-2">${item.name}</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mt-2">${item.desc}</p>
+                    </div>
+                    <button onclick="buyShopItem(${item.id})" class="w-full py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cart-plus"></i> Comprar para ${char ? char.name : 'Agente'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterShopCategory(cat) {
+            currentShopFilter = cat;
+            document.querySelectorAll('.shop-cat-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-amber-500/20', 'text-amber-300', 'border-amber-500/40');
+                btn.classList.add('bg-slate-900', 'text-slate-400', 'border-transparent');
+            });
+            renderShop();
+        }
+
+        function buyShopItem(itemId) {
+            const char = getActiveChar();
+            if (!char) {
+                showNotification("Crie ou selecione um Agente primeiro!");
+                return;
+            }
+
+            const item = state.shopCatalog.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (char.credits < item.price) {
+                showNotification(`Créditos insuficientes! Você precisa de ₡${item.price}`);
+                return;
+            }
+
+            char.credits -= item.price;
+            char.inventory.push({
+                id: Date.now(),
+                name: item.name,
+                type: item.cat.toUpperCase(),
+                desc: item.desc,
+                price: item.price
+            });
+
+            document.getElementById('user-global-credits').textContent = char.credits.toLocaleString();
+            const sheetCreditsInput = document.getElementById('char-sheet-credits');
+            if (sheetCreditsInput) sheetCreditsInput.value = char.credits;
+
+            renderShop();
+            renderCharInventory();
+            renderCharactersGrid();
+            showNotification(`'${item.name}' comprado e adicionado a ${char.name}!`);
+        }
+
+        function renderSkills() {
+            const container = document.getElementById('skills-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            state.skills.forEach(skill => {
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between bg-slate-950/70 p-2 rounded-lg border border-purple-900/30 text-xs hover:border-cyan-500/40 transition cursor-pointer";
+                row.onclick = () => {
+                    rollDice(20, 1, `Perícia: ${skill.name} (${skill.attr})`);
+                    switchView('tabletop');
+                };
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 text-[9px] font-mono border border-purple-800">${skill.attr}</span>
+                        <span class="font-bold text-slate-200">${skill.name}</span>
+                    </div>
+                    <span class="font-mono text-cyan-300 font-bold">+${skill.bonus}</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function rollAttr(attrName, elementId) {
+            rollDice(20, 1, `Atributo: ${attrName}`);
+            switchView('tabletop');
+        }
+
+        function rollDice(faces, count = 1, label = `Dado D${faces}`) {
+            let rolls = [];
+            let sum = 0;
+            for (let i = 0; i < count; i++) {
+                const roll = Math.floor(Math.random() * faces) + 1;
+                rolls.push(roll);
+                sum += roll;
+            }
+
+            const resCard = document.getElementById('last-roll-card');
+            if (resCard) {
+                resCard.classList.remove('animate-roll');
+                void resCard.offsetWidth;
+                resCard.classList.add('animate-roll');
+
+                document.getElementById('roll-label').textContent = label;
+                document.getElementById('roll-result').textContent = sum;
+                document.getElementById('roll-breakdown').textContent = `Dados: [${rolls.join(', ')}]`;
+            }
+
+            const log = document.getElementById('dice-log');
+            if (log) {
+                const entry = document.createElement('div');
+                entry.className = "p-2 rounded bg-slate-900/90 border border-purple-900/30 text-xs";
+                entry.innerHTML = `<span class="text-cyan-400 font-bold">${getActiveChar()?.name || 'Agente'}</span> rolou <b class="text-purple-300">${label}</b>: <span class="text-emerald-400 font-bold text-sm">${sum}</span>`;
+                log.prepend(entry);
+            }
+        }
+
+        const canvas = document.getElementById('vtt-canvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth - 20;
+            canvas.height = container.clientHeight - 20;
+            renderCanvas();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function changeMapScale(val) {
+            state.mapScale = parseFloat(val);
+            document.getElementById('map-scale-val').textContent = `${state.mapScale.toFixed(1)}x`;
+            renderCanvas();
+        }
+
+        function renderCanvas() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(state.mapScale, state.mapScale);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+            if (state.mapImage && state.mapImage.complete) {
+                ctx.drawImage(state.mapImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = "#090d1f";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            if (state.gridEnabled) {
+                const gridSize = 40;
+                ctx.strokeStyle = "rgba(168, 85, 247, 0.2)";
+                ctx.lineWidth = 1;
+
+                for (let x = 0; x <= canvas.width; x += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                for (let y = 0; y <= canvas.height; y += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+            }
+
+            state.tokens.forEach(token => {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(token.x, token.y, token.radius, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.clip();
+
+                if (token.imgObj && token.imgObj.complete) {
+                    ctx.drawImage(token.imgObj, token.x - token.radius, token.y - token.radius, token.radius * 2, token.radius * 2);
+                } else {
+                    ctx.fillStyle = "#7c3aed";
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                ctx.beginPath();
+                ctx.arc(token.x, token.y, token.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = (state.selectedToken === token) ? "#00f3ff" : "#a855f7";
+                ctx.lineWidth = (state.selectedToken === token) ? 3 : 2;
+                ctx.stroke();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px Rajdhani";
+                ctx.textAlign = "center";
+                ctx.fillText(token.name, token.x, token.y + token.radius + 14);
+            });
+
+            ctx.restore();
+        }
+
+        let isDragging = false;
+        let dragToken = null;
+
+        if (canvas) {
+            canvas.addEventListener('mousedown', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const rawX = e.clientX - rect.left;
+                const rawY = e.clientY - rect.top;
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                const mouseX = (rawX - centerX) / state.mapScale + centerX;
+                const mouseY = (rawY - centerY) / state.mapScale + centerY;
+
+                dragToken = state.tokens.find(t => {
+                    const dx = t.x - mouseX;
+                    const dy = t.y - mouseY;
+                    return Math.sqrt(dx * dx + dy * dy) <= t.radius;
+                });
+
+                if (dragToken) {
+                    isDragging = true;
+                    state.selectedToken = dragToken;
+                    showTokenControls(dragToken);
+                } else {
+                    state.selectedToken = null;
+                    document.getElementById('token-control-panel').classList.add('hidden');
+                }
+                renderCanvas();
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging && dragToken) {
+                    const rect = canvas.getBoundingClientRect();
+                    const rawX = e.clientX - rect.left;
+                    const rawY = e.clientY - rect.top;
+
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+
+                    dragToken.x = (rawX - centerX) / state.mapScale + centerX;
+                    dragToken.y = (rawY - centerY) / state.mapScale + centerY;
+
+                    updateTokenControlCoords(dragToken);
+                    renderCanvas();
+                }
+            });
+
+            canvas.addEventListener('mouseup', () => { isDragging = false; });
+        }
+
+        function toggleGrid() {
+            state.gridEnabled = !state.gridEnabled;
+            renderCanvas();
+        }
+
+        function uploadMapFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const img = new Image();
+                    img.onload = () => {
+                        state.mapImage = img;
+                        renderCanvas();
+                        showNotification("Novo mapa carregado!");
+                    };
+                    img.src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadMapFromUrl(e) {
+            e.preventDefault();
+            const url = document.getElementById('map-url-input').value;
+            if (url) {
+                const img = new Image();
+                img.onload = () => {
+                    state.mapImage = img;
+                    renderCanvas();
+                    closeModals();
+                    showNotification("Mapa por URL carregado!");
+                };
+                img.src = url;
+            }
+        }
+
+        function addNewToken(e) {
+            e.preventDefault();
+            const name = document.getElementById('token-name').value;
+            const url = document.getElementById('token-img-url').value || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=120&q=80';
+
+            const newToken = {
+                id: Date.now(),
+                name: name,
+                x: canvas ? canvas.width / 2 : 200,
+                y: canvas ? canvas.height / 2 : 200,
+                radius: 22,
+                imgObj: new Image()
+            };
+            newToken.imgObj.src = url;
+            newToken.imgObj.onload = () => renderCanvas();
+
+            state.tokens.push(newToken);
+            closeModals();
+            renderCanvas();
+            showNotification(`Token '${name}' adicionado!`);
+        }
+
+        function showTokenControls(token) {
+            const panel = document.getElementById('token-control-panel');
+            document.getElementById('sel-token-name').textContent = token.name;
+            document.getElementById('sel-token-img').src = token.imgObj.src;
+            document.getElementById('sel-token-size-val').textContent = `${token.radius}px`;
+            updateTokenControlCoords(token);
+            panel.classList.remove('hidden');
+        }
+
+        function updateTokenControlCoords(token) {
+            document.getElementById('sel-token-coords').textContent = `X: ${Math.round(token.x)} | Y: ${Math.round(token.y)}`;
+        }
+
+        function adjustSelectedTokenSize(delta) {
+            if (state.selectedToken) {
+                state.selectedToken.radius = Math.max(10, Math.min(120, state.selectedToken.radius + delta));
+                document.getElementById('sel-token-size-val').textContent = `${state.selectedToken.radius}px`;
+                renderCanvas();
+            }
+        }
+
+        function deleteSelectedToken() {
+            if (state.selectedToken) {
+                state.tokens = state.tokens.filter(t => t !== state.selectedToken);
+                state.selectedToken = null;
+                document.getElementById('token-control-panel').classList.add('hidden');
+                renderCanvas();
+                showNotification("Token removido!");
+            }
+        }
+
+        function renderCampaigns() {
+            const container = document.getElementById('campaigns-grid-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            state.campaigns.forEach(camp => {
+                const card = document.createElement('div');
+                card.className = "cyber-glass p-6 rounded-2xl border border-purple-500/30 space-y-4 hover:border-cyan-400 transition";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="px-2.5 py-1 rounded bg-purple-950 border border-purple-500/40 text-purple-300 text-xs font-mono">CÓDIGO: #${camp.id}</span>
+                            <h3 class="text-xl font-bold text-slate-100 font-orbitron mt-2">${camp.title}</h3>
+                        </div>
+                        <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    </div>
+                    <p class="text-slate-400 text-xs">Mestre: <b class="text-purple-300">${camp.master}</b> | Jogadores: <span class="text-cyan-300">${camp.players}</span></p>
+                    <p class="text-slate-300 text-sm leading-relaxed">${camp.desc}</p>
+                    <button onclick="switchView('tabletop'); showNotification('Entrou na sala #${camp.id}!');" class="w-full py-2 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-xs rounded-xl shadow">
+                        Entrar na Mesa
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function createNewRoom(e) {
+            e.preventDefault();
+            const name = document.getElementById('room-name').value;
+            const desc = document.getElementById('room-desc').value;
+
+            state.campaigns.push({
+                id: `NX-${Math.floor(1000 + Math.random() * 9000)}`,
+                title: name,
+                master: `${state.currentUser.name}`,
+                players: '1/6',
+                active: true,
+                desc: desc
+            });
+
+            closeModals();
+            renderCampaigns();
+            showNotification(`Sala '${name}' criada!`);
+        }
+
+        function openModal(id) {
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            document.querySelectorAll('.modal-card').forEach(el => el.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModals() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+        }
+
+        function showNotification(msg) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = "bg-slate-900 border border-cyan-400 text-cyan-300 px-4 py-3 rounded-xl shadow-2xl text-xs font-mono flex items-center gap-2 animate-bounce pointer-events-auto";
+            toast.innerHTML = `<i class="fa-solid fa-bell text-purple-400"></i> ${msg}`;
+            container.appendChild(toast);
+
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        window.onload = function() {
+            switchView('landing');
+            renderCharactersGrid();
+
+            const char = getActiveChar();
+            if (char) {
+                document.getElementById('user-global-credits').textContent = char.credits.toLocaleString();
+            }
+
+            const t1 = { id: 1, name: "Dante Vance", x: 150, y: 180, radius: 24, imgObj: new Image() };
+            t1.imgObj.src = state.characters[0].avatar;
+            state.tokens.push(t1);
+        };
+    </script>
+</body>
+</html>
